@@ -11,15 +11,14 @@ class ParticipantsRepository:
             '''
             
             INSERT INTO participants
-                (id, trip_id, email, email_to_invite_id, name)
-            VALUES (?, ?, ?, ?, ?) 
+                (id, trip_id, emails_to_invite_id, name)
+            VALUES (?, ?, ?, ?) 
             
             ''',
                 (
                     participant_info["id"],
                     participant_info["trip_id"],
-                    participant_info["email"],
-                    participant_info["email_to_invite_id"],
+                    participant_info["emails_to_invite_id"],
                     participant_info["name"]
                 )
         )
