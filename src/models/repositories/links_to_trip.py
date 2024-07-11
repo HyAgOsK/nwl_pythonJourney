@@ -25,5 +25,5 @@ class LinksToTrip:
         cursor.execute(
             '''SELECT * FROM links WHERE trip_id = ?''', (trip_id,)
         )
-        trip = cursor.fetchone()
-        return trip
+        links = cursor.fetchall()
+        return links
