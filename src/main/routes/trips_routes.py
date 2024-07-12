@@ -9,13 +9,17 @@ from src.controllers.link_creator import LinkCreator
 from src.controllers.link_finder import LinkFinder
 from src.controllers.participant_creator import ParticipantCreator
 from src.controllers.activity_creator import ActivityCreator
+from src.controllers.participant_creator import ParticipantCreator
+from src.controllers.participants_finder import ParticipantFinder
+from src.controllers.participant_confirmer import ParticipantConfirmer
+from src.controllers.acitivity_finder import ActivityFinder
 
 # Importação de repositorios
 
 from src.models.repositories.trips_repository import TripsRepository
 from src.models.repositories.emails_to_invite_repository import EmailsToInviteRepository
 from src.models.repositories.links_to_trip import LinksToTrip
-from src.models.repositories.activites_repository import ActivityRepository
+from src.models.repositories.activites_repository import ActivitiesRepository
 from src.models.repositories.participants_repository import ParticipantsRepository
 
 # Importando o gerente de conexões
@@ -93,10 +97,39 @@ def invite_to_trip(tripId):
 @trips_routes_bp.route("/trips/<tripId>/activities", methods=["POST"])
 def create_activity(tripId):
     conn = db_connetction_handler.get_connection()
-    activiry_repository = ActivityRepository(conn)
+    activiry_repository = ActivitiesRepository(conn)
     controller = ActivityCreator(activiry_repository)
 
     response = controller.create(request.json ,tripId)
 
     return jsonify(response["body"]), response["status_code"]
+
+@trips_routes_bp.route("/trips/<tripId>/participants", methods=["GET"])
+def get_trip(tripId):
+    conn = db_connetction_handler.get_connection()
+    participants_repository = ParticipantsRepository(conn)
+    controller = ParticipantFinder(participants_repository)
+
+    response = controller.find_particiant_from_trip(tripId)
+
+    return jsonify(response["body"]), response["status_code"]
+
+@trips_routes_bp.route("/trips/<tripId>/activities", methods=["GET"])
+def get_trip_activities(tripId):
+    conn = db_connetction_handler.get_connection()
+    activities_repository = ActivitiesRepository(conn)
+    controller = ActivityFinder(activities_repository)
+
+    response = controller.find_from_trip(tripId)
+
+    return jsonify(response["body"]), response["status_code"]
+
+@trips_routes_bp.route("/participants/<participantsId>/confirm", methods=["PATCH"])
+def confirm_participant(participantsId):
+    conn = db_connetction_handler.get_connection()
+    participant_repository = ParticipantsRepository(conn)
+    controller = ParticipantConfirmer(participant_repository)
     
+    response = controller.confirm(participantsId)
+    
+    return jsonify(response["body"]), response["status_code"]
